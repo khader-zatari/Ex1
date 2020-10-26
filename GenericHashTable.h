@@ -3,12 +3,12 @@
 
 typedef struct Object {
 	void* data; //the data could be an integer or a string 
-	...
+	///////////////////
 }Object;
 
 typedef struct Table {
 	Object** arr;
-	...
+	///////////////////
 }Table;
 
 /**
@@ -24,7 +24,7 @@ void freeTable(Table* table);
 
 /**
 * The function adds data to the hashtable (as described in the exe definition)
-* On success, the function returns the array index of the added data, otherwise, it return -1.
+* On success, ///the function returns the array index of the added data///, otherwise, it return -1.
 */
 int add(Table* table, void* data);
 
