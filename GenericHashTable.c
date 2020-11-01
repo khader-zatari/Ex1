@@ -9,17 +9,20 @@ Table *createTable(int size, int dType, int listLength)
     if (size > 0 && (dType == 1 || dType == 0) && listLength > 0)
     { //if all the parameters is valid continue
         Table *table;
-        table = (Table *)malloc(size * sizeof(Table)); //allocating a memory in the table
+        table = (Table *)malloc(size * sizeof(Table)); //allocating a memory for the table
         table->dType = dType;
         table->size = size;
         table->listLength = listLength;
-        table->arr = (struct Object **)malloc(sizeof(struct Object *) * size);
+        table->arr = (struct Object **)malloc(sizeof(struct Object *) * size); //allocate the memory for the array "the column"
         for (int i = 0; i < size; i++)
-        {
-            table->arr[i] = (Object *)malloc(sizeof(Object) * listLength);
-        }
+        { //allocate memory for the objects "the rows"
+            for (int j = 0; j < listLength; j++)
+            {
+                table->arr[i][j] = createObject(NULL);
+            }
 
-        return table;
+            return table;
+        }
     }
     else //there is a problem in the parameters
     {
@@ -64,17 +67,43 @@ int add(Table *table, void *data)
 }
 Object *createObject(void *data)
 {
-    Object *ob = (Object *)malloc(sizeof(Object));
+    Object *ob = (Object *)malloc(sizeof(Object)); // allocation memory for the new object
     strcpy(ob->data, data);
     return ob;
 }
 void freeObject(Object *obj, int type)
 {
-    free(obj->next);
+    //?????????????????/   free(obj->next);
+    ////type ?????????????????//
     free(obj);
 }
 void printTable(Table *table)
 {
+    Object *ob;
+    if (table == NULL)
+    {
+        printf("the table is NULL");
+        return;
+    }
+    else
+    {
+        for (int i = 0; i < table->size; i++)
+        {
+            printf("[%d]    ", i);
+            for (int j = 0; j < table->listLength; j++)
+            {
+                if (table->arr[i] == NULL)
+                {
+                    break; //go to the next column
+                }
+                else //we have data in that index
+                {
+                    printf("%d  -->    ", table->arr[i]->data);
+                }
+            }
+            printf("\n");
+        }
+    }
 }
 void freeTable(Table *table)
 {
