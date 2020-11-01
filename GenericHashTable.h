@@ -3,21 +3,24 @@
 
 typedef struct Object {
 	void* data; //the data could be an integer or a string 
-	///////////////////
+	struct Object* next;
+///////////////////
 }Object;
 
 typedef struct Table {
 	Object** arr;
-	///////////////////
+	int listLength;
+	int dType; 
+	int size ; 
 }Table;
 
-/**
+/*
 * The function gets the original size and the type of the data in the table elements.
 * it initializes the Table struct members. 
 * On success, the function returns a pointer to the new created Table, otherwise, it return NULL.
 */
 Table* createTable(int size, int dType, int listLength);
-/**
+/** 
 * The function release all the allocated members of struct Table.
 */
 void freeTable(Table* table);
