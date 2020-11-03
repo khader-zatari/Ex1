@@ -15,38 +15,6 @@ Table *createTable(int size, int dType, int listLength)
         table->d = 1;
 
         table->arr = (struct Object **)malloc(sizeof(struct Object *) * size); //allocate the memory for the array "the column"
-        Object *head;
-        for (int i = 0; i < size; i++)
-        {
-            table->arr[i] = (struct Object *)malloc(sizeof(struct Object));
-            head = table->arr[i];
-            head->data = NULL;
-            for (int j = 0; j < listLength - 1; j++)
-
-            {
-                head = (struct Object *)malloc(sizeof(struct Object));
-                head->data = NULL;
-                head = head->next;
-            }
-        }
-        // for (int i = 0; i < size; i++)
-        // {
-        //     for (int j = 0; j < listLength; j++)
-        //     {
-        //         Object *newObj =(Object *) malloc(sizeof(Object));
-        //         if (newObj == NULL)
-        //         {
-        //             printf("not allocated");
-        //             exit(0);
-        //         }
-        //         else
-        //         {
-        //             *table->arr = newObj;
-        //             newObj->next = *table->arr;
-        //             newObj->data = NULL;
-        //         }
-        //     }
-        // }
 
         return table;
     }
@@ -56,110 +24,50 @@ Table *createTable(int size, int dType, int listLength)
         return NULL;
     }
 }
-
-int add(Table *table, void *data)
+Object *createObject(void *data)
 {
-    if (table == NULL)
-    { //check if the table is NULL
-        printf("the table is NULL");
-        return -1;
-    }
-    else
-    { //if the table is not NULL
-        if (data == NULL)
-        { //check if hte table is NULL
-            printf("the data is NULL");
-            return -1;
-        }
-
-        else //the data is not NULL
-        {
-
-            if (table->dType == INT_TYPE) // data type is Integer
-            {
-                Object *ob;
-                int intHash = 0;
-                intHash = intHashFun((int *)data, table->size);
-                printf("%d",intHash);
-                Object *head = table->arr[intHash];
-
-                for (int i = 0; i < table->listLength * table->d; i++)
-                {
-                    if (head->data == NULL)
-                    {
-                        // printf("%d\t",  data);
-                        // printf("%d", *((int *)data));
-                        head->data = &data;
-                        printf("hello");
-                        break;
-                    }
-                    if (head->next != NULL)
-                        head = head->next;
-                }
-            }
-            else
-            {
-            }
-        }
-    }
+    Object *ob = (struct Object *)malloc(sizeof(struct Object));
+    ob->data = data;
+    return ob;
 }
-
-// Object *createObject(void *data)
-// {
-//     Object *ob = (Object *)malloc(sizeof(Object)); // allocation memory for the new object
-//     strcpy(ob->data, data);
-//     return ob;
-// }
-
-/*void freeObject(Object *obj, int type)
-{
-    //?????????????????/   free(obj->next);
-    ////type ?????????????????//
-    free(obj);
-}*/
 void printTable(Table *table)
 {
-    Object *ob;
-    if (table == NULL)
+    
+    if (table == NULL) //if the table is not initated print error
     {
         printf("the table is NULL");
         return;
     }
-    else
+    else //the table is initated
     {
         Object *head;
         for (int i = 0; i < table->size; i++)
         {
+            // if (head == NULL)
+            // {
+            //     continue;
+            // }
             head = table->arr[i];
             printf("[%d]\t", i);
+              
             for (int j = 0; j < table->listLength; j++)
             {
                 if (head == NULL)
-                {
-                    break; //go to the next column
+                {              
+                    continue; //go to the next column
                 }
                 else //we have data in that index
                 {
-                    printf("%d\t-->\t", (head->data));
+                    printf("%d\t-->\t",*(int *)head->data);
                     if (head->next != NULL)
+                    {
                         head = head->next;
+                    }
                 }
             }
             printf("\n");
         }
     }
-}
-/*
-void freeTable(Table *table)
-{
-    for (int i = 0; i < table->size; i++)
-    {
-        free(table->arr[i]);
-    }
-    free(table);
-}*/
-void freeTable(Table *table)
-{
 }
 int intHashFun(int *key, int origSize)
 {
@@ -229,7 +137,8 @@ int isEqual(int type, void *data1, void *data2)
         printf("the type is note defined ");
     }
 }
-Object* search(Table* table, void* data){
+Object *search(Table *table, void *data)
+{
     if (table->dType == INT_TYPE)
     {
         Object *head;
@@ -282,5 +191,54 @@ Object* search(Table* table, void* data){
             }
         }
     }
-        
+}
+int add(Table *table, void *data)
+{
+    if (table == NULL) //check if the table is NULL
+    {
+        printf("the table is NULL");
+        return -1;
+    }
+    else //if the table is not NULL
+    {
+        if (data == NULL) //check if hte table is NULL
+        {
+            printf("the data is NULL");
+            return -1;
+        }
+        else //the data is not NULL
+        {
+
+            if (table->dType == INT_TYPE) // data type is Integer
+            {
+                Object *ob;
+                int intHash = 0;
+                intHash = intHashFun((int *)data, table->size);
+                //printf("%d", intHash);
+                Object *head = table->arr[intHash];
+
+                for (int i = 0; i < table->listLength * table->d; i++)
+                {
+                    if (head == NULL)
+                    {
+                        
+                        int *intVar = (int *)malloc(sizeof(int));
+                        *intVar =*(int *) data;
+                        printf("%d\t",*intVar);
+                        ob = createObject(intVar);
+                        head = ob ;
+                        
+                        printf("%d",*(int *) head->data);
+                        
+                        break;
+                    }
+                    if (head->next != NULL)
+                        head = head->next;
+                }
+            }
+            else // the data is a String
+            {
+            }
+        }
+    }
 }
