@@ -12,6 +12,7 @@ typedef struct Table {
 	int listLength;
 	int dType; 
 	int size ; 
+	int d ; 
 }Table;
 
 /*
