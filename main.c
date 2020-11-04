@@ -4,8 +4,14 @@
 int main()
 {
     Table *t;
-    t = createTable(4, 0, 2);
-    int a = 4 ; 
-    add(t,&a);
+    t = createTable(4, 0, 3);
+    int a = 4;
+    int b = 12;
+    int c = 16;
+     char const *p = "abc";
+    add(t, &p);
+    // add(t , &b);
+    // add(t , &c);
+  
     printTable(t);
 }
