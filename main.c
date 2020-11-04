@@ -4,14 +4,15 @@
 int main()
 {
     Table *t;
-    t = createTable(4, 0, 3);
+    t = createTable(4, 1, 2);
     int a = 4;
     int b = 12;
     int c = 16;
-     char const *p = "abc";
-    add(t, &p);
-    // add(t , &b);
-    // add(t , &c);
-  
-    printTable(t);
+    char *p = "abc";
+    char *x = "abcd";
+    add(t, (char * )p);
+     //add(t , (char *) p);
+    add(t , x);
+
+     printTable(t);
 }

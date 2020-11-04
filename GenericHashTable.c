@@ -91,7 +91,7 @@ void printTable(Table *table)
                     }
                     else //we have data in that index
                     {
-                        printf("%s\t-->\t", *(char *)head->data);
+                        printf("%s\t-->\t", (char *)head->data);
                         if (head->next != NULL)
                         {
                             head = head->next;
@@ -280,32 +280,32 @@ int add(Table *table, void *data)
 
             else // the data is a String
             {
-                                Object *ob;
-                                int strHash = 0;
-                                strHash = strHashFun((char *)data, table->size);
-                                 printf("%s",(char *) data);
-                                Object *head = table->arr[strHash];
+                int intHash = 0;
+                intHash = strHashFun((char *)data, table->size);
+                // printf("%d", intHash);
+                Object *head = table->arr[intHash];
+                char *intVar = (char *)malloc(sizeof(char));
+                intVar = (char *)data;
+                // printf("%d\t", *intVar);
+                Object *ob;
+                ob = createObject(intVar);
+                if (head == NULL)
+                {
+                    table->arr[intHash] = ob;
+                }
+                else
+                {
 
-                //                 for (int i = 0; i < table->listLength * table->d; i++)
-                //                 {
-                //                     if (table->arr[strHash] == NULL)
-                //                     {
+                    for (int i = 0; i < table->d; i++)
+                    {
+                        for (int j = 0; j < table->listLength - 1 && head != NULL && head->next != NULL; j++)
+                        {
+                            head = head->next;
+                        }
 
-                //                         char *strVar = (char *)malloc((sizeof(char) * strlen((char *)data)) + 1);
-                //                         //printf("")
-                //                         strcpy(strVar, (char *)data);
-                //                        // printf("%s\t", (char *)data);
-                //                         Object *ob;
-                //                         ob = createObject((void *)strVar);
-                //                         table->arr[strHash] = ob;
-                // ///////////////////////////////////////we should add free here to the ob
-                //                         // printf("%s", *(char *)table->arr[strHash]->data);
-
-                //                         break;
-                //                     }
-                //                     if (head->next != NULL)
-                //                         head = head->next;
-                //                 }
+                        head->next = ob;
+                    }
+                }
             }
         }
     }
