@@ -31,6 +31,7 @@ void freeTable(Table* table);
 * The function adds data to the hashtable (as described in the exe definition)
 * On success, ///the function returns the array index of the added data///, otherwise, it return -1.
 */
+
 int add(Table* table, void* data);
 
 /**
