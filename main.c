@@ -32,10 +32,10 @@ int main()
   add(t, &a); //0
   add(t, &b); //01
   add(t, &c); //012
-//   add(t, &d); //0123
-//   add(t, &e);
-//   add(t, &f);
-//   add(t, &g);
+  add(t, &d); //0123
+  add(t, &e);
+  add(t, &f);
+  add(t, &g);
 //   add(t, &h);
 //   add(t, &i);
 //   add(t, &j);
@@ -56,7 +56,10 @@ int main()
   //add(t, &e);
 
   printTable(t);
-  int y = 4;
+  //removeObj(t , &f);
+  freeTable(t);
+  printf("\n\n");
+  //printTable(t);
   //printf("hello");
   //search(t, z);
   // printf("%s", (char *)search(t, z)->next->data);

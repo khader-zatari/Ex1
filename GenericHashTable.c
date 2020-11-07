@@ -249,10 +249,9 @@ int add(Table *table, void *data)
             int end = 0;
             end = (table->listLength) * (table->d);
 
-            printf("end is =%d, d is =%d  \n", end, table->d);
             for (int x = 0; x < table->d; x++)
             {
-                // printf("%dx", x);
+
                 Object *head = table->arr[(intHash * table->d) + x];
                 if (head == NULL)
                 {
@@ -267,7 +266,7 @@ int add(Table *table, void *data)
                 if (end != 1 && (end - 1) % table->listLength == 0)
                 {
                     end -= 1;
-                    printf("%d  ", end);
+
                     continue;
                 }
                 if (end != 1)
@@ -304,153 +303,79 @@ int add(Table *table, void *data)
         }
     }
 }
-// if (table == NULL) //check if the table is NULL
-// {
-//     printf("the table is NULL");
-//     return -1;
-// }
-// else //if the table is not NULL
-// {
-//     if (data == NULL) //check if hte table is NULL
-//     {
-//         printf("the data is NULL");
-//         return -1;
-//     }
-//     else //the data is not NULL
-//     {
-//         int intHash = 0;
-//         Object *ob;
-//         if (table->dType == INT_TYPE) // data type is Integer
-//         {
-//             intHash = intHashFun((int *)data, table->size);
-//             int *intVar = (int *)malloc(sizeof(int));
-//             *intVar = *(int *)data;
-//             ob = createObject(intVar);
-//         }
-//         else
-//         {
-//             intHash = strHashFun((char *)data, table->size);
-//             char *intVar = (char *)malloc(sizeof(char));
-//             intVar = (char *)data;
-//             ob = createObject(intVar);
-//         }
-//         Object *head = table->arr[intHash * table->d];
-//         if (head == NULL)
-//         {
-//             table->arr[intHash * table->d] = ob;
-//             return intHash * table->d;
-//         }
-//         else
-//         {
-//             int iShouldDoubleIt = table->listLength * table->d; //0 -> i shoudl not doulble it
-//             if (table->listLength == 1)
-//             {
-//                 table->arr = (Object **)realloc(table->arr, sizeof(Object *) * table->size * table->d * 2);
-//                 table->d = table->d * 2;
-//                 table->tabelNewSize = table->size * table->d; //this should be under the d
-//                 for (int a = table->tabelNewSize / 2; a < table->tabelNewSize; a++)
-//                 {
-//                     table->arr[a] = NULL;
-//                 }
-//                 for (int z = (table->size * table->d / 2) - 1; z > 0; z--)
-//                 {
-//                     table->arr[(z * 2)] = table->arr[z];
-//                     table->arr[z] = NULL;
-//                 }
+int removeObj(Table *table, void *data)
+{
+    // Store head node
+    Object *head;
+    Object *prev;
+    int intHash;
+    int red = table->listLength;
+    if (table->dType == INT_TYPE) // data type is Integer
+    {
+        intHash = intHashFun((int *)data, table->size);
+    }
+    else
+    {
+        intHash = strHashFun((char *)data, table->size);
+    }
+    for (int i = 0; i < table->d; i++)
+    {
+        Object *temp = table->arr[(intHash * table->d) + i];
+        Object *head;
+        Object *prev;
 
-//                 Object *head1 = table->arr[intHash * table->d];
-//                 for (int x = 0; x < table->d; x++)
-//                 {
-//                     if (head1 == NULL)
-//                     {
-//                         table->arr[(intHash * table->d) + x] = ob;
-//                         return (intHash * table->d) + x;
-//                     }
-//                     head1 = table->arr[(intHash * table->d) + 1 + x];
-//                 }
-//             }
-//             for (int i = 0; i < table->d; i++) // for all the lists length except 1
-//             {
-//                 head = table->arr[(intHash * table->d) + i];
-//                 // printf("{%d}", (intHash * table->d) + i);
+        // If head node itself holds the key to be deleted
+        if (temp != NULL && isEqual(table->dType, temp->data, data) == 0)
+        {
+            table->arr[(intHash * table->d) + i] = temp->next; // Changed head
+            free(temp);                                        // free old head
+            return (intHash * table->d) + i;
+        }
 
-//                 for (int j = 0; j < table->listLength -1; j++) ///////////////// -1
-//                 {
-//                     //printf(  ",[%d,%d]%d\n",  i, j,*(int *) head->data);
+        // Search for the key to be deleted, keep track of the
+        // previous node as we need to change 'prev->next'
+        while (temp != NULL && isEqual(table->dType, temp->data, data) != 0)
+        {
+            red -= 1;
+            prev = temp;
+            temp = temp->next;
+        }
 
-//                     if (head->next != NULL)
-//                     {
+        // If key was not present in linked list
+        if (temp == NULL && i == table->d - 1)
+            return -1;
+        if (temp == NULL && red == 0)
+            continue;
+        if (temp != NULL)
+        {
+            // Unlink the node from linked list
+            prev->next = temp->next;
 
-//                         head = head->next;
+            free(temp); // Free memory
+            return (intHash * table->d) + i;
+        }
+    }
+}
+void freeObject(Object *obj, int type)
+{
+    free(obj->data);
+    free(obj);
+}
+void freeTable(Table *table)
+{
+    Object *prev;
+    int tableCells = table->listLength * table->size;
+    for (int i = 0; i < table->tabelNewSize; i++)
+    {
+        Object *temp = table->arr[i];
+        while (temp != NULL)
+        {
 
-//                         iShouldDoubleIt -= 1;
-
-//                         // printf("%d   ", iShouldDoubleIt);
-
-//                         if (iShouldDoubleIt == 1) // you should double it then add it to it's place
-//                         {
-//                             table->arr = (Object **)realloc(table->arr, sizeof(Object *) * table->size * table->d * 2);
-//                             table->d = table->d * 2;
-//                             table->tabelNewSize = table->size * table->d; //this should be under the d
-//                             for (int a = table->tabelNewSize / 2; a < table->tabelNewSize; a++)
-//                             {
-//                                 table->arr[a] = NULL;
-//                             }
-//                             for (int z = (table->size * table->d / 2) - 1; z > 0; z--)
-//                             {
-//                                 table->arr[(z * 2)] = table->arr[z];
-//                                 table->arr[z] = NULL;
-//                             }
-//                             Object *head1 = table->arr[intHash * table->d];
-//                             for (int x = 0; x < table->d; x++)
-//                             {
-//                                 if (head1 == NULL)
-//                                 {
-//                                     table->arr[(intHash * table->d) + x] = ob;
-//                                     return (intHash * table->d) + x;
-//                                 }
-//                                 head1 = table->arr[(intHash * table->d) + 1 + x];
-//                             }
-
-//                             //// here i should add the add for the list != 1 ; just copy it and edit it.
-//                         }
-//                     }
-//                     else
-//                     {
-//                         if (i == table->d -1  && j == table->listLength -1)
-//                         {printf("{%d,%d}",i, j);
-
-//                             table->arr = (Object **)realloc(table->arr, sizeof(Object *) * table->size * table->d * 2);
-//                             table->d = table->d * 2;
-//                             table->tabelNewSize = table->size * table->d; //this should be under the d
-//                             for (int a = table->tabelNewSize / 2; a < table->tabelNewSize; a++)
-//                             {
-//                                 table->arr[a] = NULL;
-//                             }
-//                             for (int z = (table->size * table->d / 2) - 1; z > 0; z--)
-//                             {
-//                                 table->arr[(z * 2)] = table->arr[z];
-//                                 table->arr[z] = NULL;
-//                             }
-//                             Object *head1 = table->arr[intHash * table->d];
-//                             for (int x = 0; x < table->d; x++)
-//                             {
-//                                 if (head1 == NULL)
-//                                 {
-//                                     table->arr[(intHash * table->d) + x] = ob;
-//                                     return (intHash * table->d) + x;
-//                                 }
-//                                 head1 = table->arr[(intHash * table->d) + 1 + x];
-//                             }
-//                         }
-
-//                         head->next = ob;
-
-//                         //printf("%d", *(int *)head->next->data);
-//                         return intHash;
-//                     }
-//                 }
-//             }
-//         }
-//     }
-// }
+            prev = temp;
+            temp = temp->next;
+            freeObject(prev, table->dType);
+        }
+    }
+    free(table->arr);
+    free(table);
+}
