@@ -16,7 +16,10 @@ Table *createTable(int size, int dType, int listLength)
         table->tabelNewSize = size;
 
         table->arr = (struct Object **)malloc(sizeof(struct Object *) * size); //allocate the memory for the array "the column"
-
+        for (int i = 0; i < table->size; i++)
+        {
+            table->arr[i] = NULL;
+        }
         return table;
     }
     else //there is a problem in the parameters
@@ -27,6 +30,10 @@ Table *createTable(int size, int dType, int listLength)
 }
 Object *createObject(void *data)
 {
+    if (data == NULL)
+    {
+        return NULL;
+    }
     Object *ob = (struct Object *)malloc(sizeof(struct Object)); //allocat memory for the object
     ob->data = data;
     return ob;
@@ -98,18 +105,22 @@ int strHashFun(char *key, int origSize)
 }
 int isEqual(int type, void *data1, void *data2)
 {
+    if (data1 == NULL || data2 == NULL)
+    {
+        return -1;
+    }
     if (type == INT_TYPE || type == STR_TYPE)
     {
         if (type == INT_TYPE)
         {
             if (*(int *)data1 == *(int *)data2)
             {
-                printf("its equal");
+
                 return (0);
             }
             else
             {
-                printf("it's not equal");
+
                 return (-1);
             }
         }
@@ -119,7 +130,7 @@ int isEqual(int type, void *data1, void *data2)
             int data2Len = strlen((char *)data2);
             if (data2Len != data1Len)
             {
-                printf("its not equale");
+
                 return (-1);
             }
             else
@@ -132,13 +143,13 @@ int isEqual(int type, void *data1, void *data2)
                     {
                         if (i == data2Len - 1)
                         {
-                            printf("its equal");
+
                             return (0);
                         }
                     }
                     else
                     {
-                        printf("it's not equal");
+
                         return (-1);
                     }
                 }
@@ -147,18 +158,33 @@ int isEqual(int type, void *data1, void *data2)
     }
     else
     {
+        return -1;
         printf("the type is note defined ");
     }
+    return -1;
 }
 Object *search(Table *table, void *data)
 {
-
+    if (table == NULL)
+    {
+        return NULL;
+    }
+    if (data == NULL)
+    {
+        return NULL;
+    }
     Object *head;
-    Object *find;
-    int success = 0;
+
+    int success = 1;
     for (int i = 0; i < table->tabelNewSize; i++)
     {
+
         head = table->arr[i];
+        if (head == NULL)
+        {
+            printf("hi");
+            continue;
+        }
         if (table->dType == INT_TYPE)
         {
             success = isEqual(INT_TYPE, head->data, data);
@@ -170,17 +196,20 @@ Object *search(Table *table, void *data)
 
         if (success == 0)
         {
-            find = head;
-            return find;
-        }
-        if (success != 0)
-        {
-            printf("not working ");
-            return NULL;
+
+            return head;
         }
 
-        for (int j = 0; j < table->listLength - 1; j++)
+        for (int j = 0; j < table->listLength; j++)
         {
+            if (head->next != NULL)
+            {
+                head = head->next;
+            }
+            if (head->next == NULL)
+            {
+                break;
+            }
 
             if (table->dType == INT_TYPE)
             {
@@ -189,21 +218,21 @@ Object *search(Table *table, void *data)
             if (table->dType == STR_TYPE)
             {
                 success = isEqual(STR_TYPE, head->data, data);
-                printf("hello");
+                //printf("hello");
             }
             if (success == 0)
             {
-                find = head;
-                return find;
+
+                return head;
             }
-            if (success != 0)
-            {
-                printf("not working ");
-                return NULL;
-            }
-            head = head->next;
         }
     }
+    if (success == -1)
+    {
+        printf("not working ");
+        return NULL;
+    }
+    return NULL; ////last
 }
 int add(Table *table, void *data)
 {
@@ -227,7 +256,7 @@ int add(Table *table, void *data)
             if (table->dType == INT_TYPE) // data type is Integer
             {
                 intHash = intHashFun((int *)data, table->size);
-                int *intVar = (int *)malloc(sizeof(int));
+                int *intVar = NULL;
                 *intVar = *(int *)data;
                 ob = createObject(intVar);
                 ob->next = NULL;
@@ -235,7 +264,7 @@ int add(Table *table, void *data)
             else
             {
                 intHash = strHashFun((char *)data, table->size);
-                char *intVar = (char *)malloc(sizeof(char));
+                char *intVar; // = (char *)malloc(sizeof(char));
                 intVar = (char *)data;
                 ob = createObject(intVar);
                 ob->next = NULL;
@@ -302,11 +331,16 @@ int add(Table *table, void *data)
             }
         }
     }
+    return -1;
 }
 int removeObj(Table *table, void *data)
 {
+    if (data == NULL)
+    {
+        return -1;
+    }
     // Store head node
-    Object *head;
+
     Object *prev;
     int intHash;
     int red = table->listLength;
@@ -321,7 +355,7 @@ int removeObj(Table *table, void *data)
     for (int i = 0; i < table->d; i++)
     {
         Object *temp = table->arr[(intHash * table->d) + i];
-        Object *head;
+
         Object *prev;
 
         // If head node itself holds the key to be deleted
@@ -355,16 +389,17 @@ int removeObj(Table *table, void *data)
             return (intHash * table->d) + i;
         }
     }
+    return -1; //////last
 }
 void freeObject(Object *obj, int type)
 {
-    free(obj->data);
+
     free(obj);
 }
 void freeTable(Table *table)
 {
     Object *prev;
-    int tableCells = table->listLength * table->size;
+
     for (int i = 0; i < table->tabelNewSize; i++)
     {
         Object *temp = table->arr[i];
